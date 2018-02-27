@@ -10,6 +10,8 @@ output:
     number_sections: false  ## if you want number sections at each table header
     theme: united  # many options for theme, this one is my favorite.
     highlight: tango  # specifies the syntax highlighting style
+editor_options:
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -26,6 +28,16 @@ Graphics in R may be created by many different methods including base graphics a
 ![](images/plotsinR.jpg)
 
 
+## Rstudio & R Notebooks    
+
+[**RStudio**](https://www.rstudio.com/) provides an excellent interactive environment to analyse and visualise data.
+_ensure you have version > 1.0 installed. Download latest version [here](https://www.rstudio.com/products/rstudio/#Desktop)._
+
+In particular we'll be using **R Notebooks**, an interactive `Rmd` format similar to a Jupyter notebook.
+
+Let's open Rstudio and create an R Notebook
+
+## `ggplot2`
 
 The ggplot2 package was created by Hadley Wickham and provides a intuitive plotting system to rapidly generate publication quality graphics.
 
@@ -51,7 +63,21 @@ On top of this central philosophy ggplot2 has:
 ![](images/Slide1.jpg)
 
 
+- Consistency: The properties of the image (visual variables) should match the properties of the data. 
+- Importance Ordering: Encode the most important information in the most effective way.
+- Expressiveness: Tell the truth and nothing but the truth
+(don’t lie, and don’t lie by omission)
+- Effectiveness: Use encodings that people decode better
+(where better = faster and/or more accurate)
+
+
 ## How ggplot2 builds a plot.
+
+
+![](https://oestatistico.com.br/wp-content/uploads/2016/08/Grammar-graphhics-1.png)
+
+
+
 
 ![](images/Slide2.jpg)
 
@@ -150,6 +176,8 @@ Now we can see that we have gg/ggplot object (pcPlot)  and in this the data has 
 
 Important information on how to map the data to the visual properties (aesthetics) of the plot as well as what type of plot to use (geom) have however yet to specified. 
 
+We can access elements of the plot object using `$`.
+
 ```{r missing_rest}
 pcPlot$mapping
 pcPlot$theme
@@ -175,20 +203,30 @@ Below the geom_point function is used to specify a point plot, a scatter plot of
 ```{r ggplot_aes_geom}
 pcPlot <- ggplot(data=patients_clean)
 
-pcPlot <- pcPlot+aes(x=Height,y=Weight)
-pcPlot <- pcPlot+geom_point()
-pcPlot
+pcPlot <- pcPlot + aes(x=Height,y=Weight)
+pcPlot <- pcPlot + geom_point()
+
 pcPlot$mapping
 pcPlot$theme
 pcPlot$layers
-
+pcPlot$layers[[1]]
 ```
+
+```{r}
+dataset %>% ggplot(aes(x = total_passgrs, y = total_fatal_injuries)) + geom_point()
+```
+
+```{r}
+dataset %>% ggplot(aes(x = total_passgrs, y = total_fatal_injuries)) + geom_density() +
+    scale_colour_viridis() + facet_grid(~aircraft_category)
+```
+
 
 Now we have all the components of our plot, we need we can display the results.
 
+
 ```{r ggplot_aes_geom_display}
 pcPlot
-
 ```
 
 
@@ -225,57 +263,55 @@ Several geoms are available in ggplot2:-
 
 ```{r, line_simple}
 pcPlot <- ggplot(data=patients_clean,
-        mapping=aes(x=Height,y=Weight))
+        mapping=aes(x=Height,y=Weight)) + geom_point()
+    
 
-pcPlot_line <- pcPlot+geom_line() 
-
-pcPlot_line
+pcPlot + geom_line() 
 
 ```
 
 ```{r, smooth_simple}
-pcPlot <- ggplot(data=patients_clean,
-        mapping=aes(x=Height,y=Weight))
-
-pcPlot_smooth <- pcPlot+geom_smooth() 
-
-pcPlot_smooth
+pcPlot + geom_smooth() 
 
 ```
 
 
+```{r}
+pcPlot + geom_smooth(method = "lm") 
+```
+
+
+
+
 ## Geoms - Bar and frequency plots
+
+### `geom_bar`
 
 ```{r, bar_simple}
 pcPlot <- ggplot(data=patients_clean,
         mapping=aes(x=Sex))
 
-pcPlot_bar <- pcPlot+geom_bar() 
-
-pcPlot_bar
-
-
+pcPlot + geom_bar() 
 ```
 
+**#BarBarPlots**
+
+![](https://pagepiccinini.files.wordpress.com/2016/02/barplot_psa1.jpg) ![](https://ksr-ugc.imgix.net/assets/011/118/050/2a0e6672e417ed2a12fac1b1828d309a_original.png?w=680&fit=max&v=1462543835&auto=format&lossless=true&s=28a174592b91b6b590e0b35da3ade2a0)
+
+##### `geom_histogram`
 
 ```{r, histogram_simple}
 pcPlot <- ggplot(data=patients_clean,
         mapping=aes(x=Height))
 
-pcPlot_hist <- pcPlot+geom_histogram() 
+pcPlot + geom_histogram() 
 
-pcPlot_hist
 
 ```
 
 
 ```{r, density_simple}
-pcPlot <- ggplot(data=patients_clean,
-        mapping=aes(x=Height))
-
-pcPlot_density <- pcPlot+geom_density() 
-
-pcPlot_density
+pcPlot + geom_density(fill = "black") 
 
 ```
 
@@ -283,26 +319,17 @@ pcPlot_density
 ## Geoms - Box and violin plots
 
 ```{r, boxplot_simple}
-
 pcPlot <- ggplot(data=patients_clean,
         mapping=aes(x=Sex,y=Height))
 
-pcPlot_boxplot <- pcPlot+geom_boxplot() 
-
-pcPlot_boxplot
+pcPlot + geom_boxplot() 
 ```
 
 ```{r, violin_simple}
-
-pcPlot <- ggplot(data=patients_clean,
-        mapping=aes(x=Sex,y=Height))
-
-pcPlot_violin <- pcPlot+geom_violin() 
-
-pcPlot_violin
+pcPlot + geom_violin() 
 ```
 
-An overview of geoms and thier arguments can be found at ggplot2 documentation or within the ggplot2 cheatsheet.
+An overview of geoms and their arguments can be found at ggplot2 documentation or within the ggplot2 cheatsheet.
 
 -[ggplot2 documentation](http://docs.ggplot2.org/current/)
 
@@ -310,12 +337,20 @@ An overview of geoms and thier arguments can be found at ggplot2 documentation o
 
 # Aesthetics
 
+- color/colour
+- fill
+- shape
+- size
+- linetype
+
+
 In order to change the property on an aesthetic of a plot into a constant value (e.g. set colour of all points to red) we can supply the colour argument to the geom_point() function.
 
 ```{r, scatter_coloured}
 pcPlot <- ggplot(data=patients_clean,
                  mapping=aes(x=Height,y=Weight))
-pcPlot+geom_point(colour="red")
+
+pcPlot + geom_point(colour = "red")
 ```
 
 
@@ -326,9 +361,7 @@ In these examples we supply additional information to the aes() function to defi
 First we can recreate the plot we saw earlier.
 
 ```{r, scatter_simple}
-pcPlot <- ggplot(data=patients_clean,
-                 mapping=aes(x=Height,y=Weight))
-pcPlot+geom_point()
+pcPlot + geom_point()
 ```
 
 Now we can adjust the aes mapping by supplying an argument to the colour parameter in the aes function. (Note that ggplot2 accepts "color" or "colour" as parameter name)
@@ -337,9 +370,21 @@ Now we can adjust the aes mapping by supplying an argument to the colour paramet
 This simple adjustment allows for identifaction of the separation between male and female measurements for height and weight.
 
 ```{r, scatter_aes_sexColour}
-pcPlot <- ggplot(data=patients_clean,
-                 mapping=aes(x=Height,y=Weight,colour=Sex))
-pcPlot+geom_point()
+pcPlot <- ggplot(patients_clean, aes(x=Height, y=Weight, colour=Sex, group = Sex))
+pcPlot + geom_point() + geom_smooth(method = "lm") 
+```
+```{r}
+pcPlot <- ggplot(patients_clean, aes(x=Height, y=Weight, colour=Sex, shape = Smokes, linetype = Smokes))
+pcPlot + geom_point() + geom_smooth(method = "lm")
+```
+
+
+
+```{r, scatter_aes_sexColourFill}
+pcPlot <- ggplot(patients_clean, 
+                 aes(x=Height, y = Weight, 
+                     fill = Sex))
+pcPlot + geom_point(colour = "white", shape = 21, size = 3)
 ```
 
 Similarly the shape of points may be adjusted.
@@ -350,6 +395,24 @@ pcPlot <- ggplot(data=patients_clean,
 pcPlot+geom_point()
 ```
 
+
+
+```{r, echo = F}
+generateRPointShapes<-function(){
+    oldPar<-par()
+    par(font=2, mar=c(0.5,0,0,0))
+    y=rev(c(rep(1,6),rep(2,5), rep(3,5), rep(4,5), rep(5,5)))
+    x=c(rep(1:5,5),6)
+    plot(x, y, pch = 0:25, cex=1.5, ylim=c(1,5.5), xlim=c(1,6.5),
+         axes=FALSE, xlab="", ylab="", bg="blue")
+    text(x, y, labels=0:25, pos=3)
+    par(mar=oldPar$mar,font=oldPar$font )
+}
+generateRPointShapes()
+```
+
+
+
 The aesthetic mappings may be set directly in the geom_points() function as previously when specifying red. This can allow the same ggplot object to be used by different aesethetic mappings and varying geoms
 
 ```{r, aes_in_geom}
@@ -358,6 +421,14 @@ pcPlot+geom_point(aes(x=Height,y=Weight,colour=Sex))
 pcPlot+geom_point(aes(x=Height,y=Weight,colour=Smokes))
 pcPlot+geom_point(aes(x=Height,y=Weight,colour=Smokes,shape=Sex))
 pcPlot+geom_violin(aes(x=Sex,y=Height,fill=Smokes))
+```
+
+```{r}
+library(yarrr)
+pirateplot(formula = Weight ~ Sex,
+           data = patients_clean,
+           theme = 3,
+           main = "theme = 1")
 ```
 
 
@@ -544,7 +615,7 @@ Multiple X/Y scales can be combined to give full control of axis marks.
 pcPlot <- ggplot(data=patients_clean,aes(x=Sex,y=Height,fill=Smokes))
 pcPlot +
   geom_violin(aes(x=Sex,y=Height)) +
-  scale_x_discrete(labels=c("Women", "Men"))+
+  scale_x_discrete(labels=c("Women", "Men")) +
   scale_y_continuous(breaks=c(160,180),labels=c("Short", "Tall"))
 ```
 
@@ -560,6 +631,8 @@ pcPlot + geom_point(size=4)
 ```
 
 In the above example the discrete colours for the Sex variable was selected by default.
+
+### Colour scales
 
 ### Manual discrete colour scale
 
@@ -703,6 +776,30 @@ pcPlot + geom_point(size=4,alpha=0.8) +
                          midpoint = median(patients_clean$BMI),
                          breaks=c(25,30),labels=c("Low","High"),
                          name="Body Mass Index")
+```
+
+### viridis continuous colour scale
+
+The `viridis` package brings to R color scales created by Stéfan van der Walt and Nathaniel Smith for the Python matplotlib library.
+
+These color scales are designed to be:
+
+- **Colorful** spanning as wide a palette as possible so as to make differences easy to see,
+- **Perceptually uniform** meaning that values close to each other have similar-appearing colors and values far away from each other have more different-appearing colors, consistently across the range of values,
+- **Robust to colorblindness** so that the above properties hold true for people with common forms of colorblindness, as well as in grey scale printing, and
+- **Pretty** oh so pretty
+
+
+```{r}
+library(viridis)
+```
+
+what's goign on
+
+```{r}
+ggplot(data.frame(x = rnorm(10000), y = rnorm(10000)), aes(x = x, y = y)) +
+  geom_hex() + coord_fixed() +
+  scale_fill_viridis() + theme_bw()
 ```
 
 Multiple scales may be combined to create high customisable plots and scales
