@@ -1,15 +1,21 @@
 ---
-title: "Introduction to ggplot2"
-author: "Thomas Carroll"
-date: "MRC-CSC/Shared-bioinformatics-training"
-output: 
+title: "Data visualisation in R"
+author: "Anna Krystalli"
+date: "adapted from content by Thomas Carroll"
+output:
   html_document:
-    toc: true # table of content true
+    df_print: paged
+    toc: yes
     toc_float: yes
-    depth: 3  # upto three depths of headings (specified by #, ## and ###)
-    number_sections: false  ## if you want number sections at each table header
-    theme: united  # many options for theme, this one is my favorite.
-    highlight: tango  # specifies the syntax highlighting style
+    theme: united
+  html_notebook:
+    depth: 3
+    fig_caption: yes
+    highlight: tango
+    number_sections: no
+    theme: united
+    toc: yes
+    toc_float: yes
 editor_options:
   chunk_output_type: inline
 ---
@@ -19,7 +25,109 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
+
+# The essence of data visualisation
+
+> **Data Visualisation:** The _representation_ and _presentation_ of _data_ to _facilitate understanding_.
+
+---
+
+## data
+
+### **data is:** _names, amounts, groups, statistical values, dates, comments locations..._
+
+
+
+
+<figure>
+<embed src="images/data.svg" type="image/svg+xml" />
+<figcaption>source: <a href="https://docs.google.com/presentation/d/10L-yA_Tq2-3r70F8EZHE0y5GCEE4214oJHucUclOhX8/edit#slide=id.g140a4aa7b2_1_0">Vega-Lite tutorial slides</a> by Dominik Moritz & Kanit “Ham” Wongsuphasawat
+</figcaption>
+</figure>
+
+### **data `!=` meaning**
+
+We cannot easily establish comparative size and relationships between multiple data points from tabular data. 
+
+We need a better representation to extract meaning
+
+## data representation
+
+### Visual encoding 
+
+#### marks
+- points
+- lines
+- areas
+
+#### attributes
+appearance properties of marks
+
+- colour
+- size
+- shape
+- position
+
+# Building a plot from its components.
+
+### start with data: `mtcars`
+
+```{r, echo=FALSE}
+mtcars
+```
+
+### encode a variable on an axis
+<embed src="images/pl1.svg" type="image/svg+xml" />
+
+### add another variable using another axis
+<embed src="images/pl3.svg" type="image/svg+xml" />
+
+### encode a thrid variable using colour
+<embed src="images/pl4.svg" type="image/svg+xml" />
+
+
+
+
+
+### data properties guide visual encoding 
+
+<figure>
+<embed src="images/data_types.svg" type="image/svg+xml" />
+<figcaption>source: <a href="https://docs.google.com/presentation/d/10L-yA_Tq2-3r70F8EZHE0y5GCEE4214oJHucUclOhX8/edit#slide=id.g140a4aa7b2_1_0">Vega-Lite tutorial slides</a> by Dominik Moritz & Kanit “Ham” Wongsuphasawat
+</figcaption>
+</figure>
+
+
+
+### principles of good data encoding
+
+- Consistency: The properties of the image (visual variables) should match the properties of the data. 
+- Importance Ordering: Encode the most important information in the most effective way.
+- Expressiveness: Tell the truth and nothing but the truth
+(don’t lie, and don’t lie by omission)
+- Effectiveness: Use encodings that people decode better
+(where better = faster and/or more accurate)
+
+
+# The grammar of grahics
+
+#### An abstraction which makes thinking, reasoning and communicating graphics easier
+
+Developed by Leland Wilkinson, particularly in “The Grammar of Graphics” 1999/2005, 
+
+<img src="images/gog.jpg" height="100px" width="100px"/>
+
+Describes a consistent syntax for the construction of a wide range of complex graphics by a concise description of their components.
+
+![](https://cdn-images-1.medium.com/max/800/1*MMZuYgeC_YjXNC1r4D4sog.png)
+
+
+
+
+
 # Graphics in R
+
+
 
 The R language has extensive graphical capabilities.
 
@@ -41,8 +149,13 @@ Let's open Rstudio and create an R Notebook
 
 The ggplot2 package was created by Hadley Wickham and provides a intuitive plotting system to rapidly generate publication quality graphics.
 
-ggplot2 builds on the concept of the "Grammar of Graphics" (Wilkinson 2005, Bertin 1983) which describes a consistent syntax for the construction of a wide range of complex graphics by a concise description of their components.
+**`ggplot2` builds on the "Grammar of Graphics"** 
 
+<img src="images/lgg.png" height="100px" width="150px"/>
+<img src="images/ggp_book.jpg" height="100px" width="150px"/>
+
+
+![](https://cdn-images-1.medium.com/max/800/1*w1RnmuE7VRK9aCAbtW9KAQ.gif)
 
 # Why use ggplot2
 
@@ -55,29 +168,7 @@ On top of this central philosophy ggplot2 has:
 - Large developer base -- Many libraries extending its flexibility.
 - Large user base -- Great documentation and active mailing list.
 
-
-# Grammar of Graphics
-
-## How to build a plot from its components.
-
-![](images/Slide1.jpg)
-
-
-- Consistency: The properties of the image (visual variables) should match the properties of the data. 
-- Importance Ordering: Encode the most important information in the most effective way.
-- Expressiveness: Tell the truth and nothing but the truth
-(don’t lie, and don’t lie by omission)
-- Effectiveness: Use encodings that people decode better
-(where better = faster and/or more accurate)
-
-
 ## How ggplot2 builds a plot.
-
-
-![](https://oestatistico.com.br/wp-content/uploads/2016/08/Grammar-graphhics-1.png)
-
-
-
 
 ![](images/Slide2.jpg)
 
@@ -136,25 +227,23 @@ Earlier we have been working with the patients' dataset to create a "clean and t
 
 Now we will use a cleaned dataset to demonstrate some of the plotting capabilities of ggplot2.
 
-```{r load_packages, echo=FALSE, eval=TRUE,warning=F,message=F}
-suppressPackageStartupMessages(library(tidyr))
-suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(stringr))
-suppressPackageStartupMessages(library(lubridate))
-```
-
-
-```{r present_clean}
+```{r load_packages, eval=TRUE,warning=F,message=F}
 library(tidyr)
 library(ggplot2)
 library(dplyr)
 library(stringr)
 library(lubridate)
 
-patients_clean <- read.delim("patient-data-cleaned.txt",sep="\t")
 
 ```
+
+## Get data
+
+```{r}
+patients_clean <- read.delim("patient-data-cleaned.txt",sep="\t")
+```
+
+
 
 ## Our first ggplot2 graph
 
@@ -212,16 +301,6 @@ pcPlot$layers
 pcPlot$layers[[1]]
 ```
 
-```{r}
-dataset %>% ggplot(aes(x = total_passgrs, y = total_fatal_injuries)) + geom_point()
-```
-
-```{r}
-dataset %>% ggplot(aes(x = total_passgrs, y = total_fatal_injuries)) + geom_density() +
-    scale_colour_viridis() + facet_grid(~aircraft_category)
-```
-
-
 Now we have all the components of our plot, we need we can display the results.
 
 
@@ -245,17 +324,17 @@ As we have seen, an important element of a ggplot is the geom used. Following th
 
 Several geoms are available in ggplot2:-
 
-* geom_point() - Scatter plots
-* geom_line() - Line plots
-* geom_smooth() - Fitted line plots
-* geom_bar() - Bar plots
-* geom_boxplot() - Boxplots
-* geom_jitter() - Jitter to plots
-* geom_histogram() - Histogram plots
-* geom_density() - Density plots
-* geom_text() - Text to plots
-* geom_errorbar() - Errorbars to plots
-* geom_violin() - Violin plots
+* `geom_point()` - Scatter plots
+* `geom_line()` - Line plots
+* `geom_smooth()` - Fitted line plots
+* `geom_bar()` - Bar plots
+* `geom_boxplot()` - Boxplots
+* `geom_jitter()` - Jitter to plots
+* `geom_histogram()` - Histogram plots
+* `geom_density()` - Density plots
+* `geom_text()` - Text to plots
+* `geom_errorbar()` - Errorbars to plots
+* `geom_violin()` - Violin plots
 
 ## Geoms - Line plots
 
@@ -342,6 +421,15 @@ An overview of geoms and their arguments can be found at ggplot2 documentation o
 - shape
 - size
 - linetype
+
+
+
+<figure>
+<img src="images/visual-encoding.png"/>
+<figcaption>source: <a href="https://docs.google.com/presentation/d/10L-yA_Tq2-3r70F8EZHE0y5GCEE4214oJHucUclOhX8/edit#slide=id.g140a4aa7b2_1_0">Vega-Lite tutorial slides</a> by Dominik Moritz & Kanit “Ham” Wongsuphasawat
+</figcaption>
+</figure>
+
 
 
 In order to change the property on an aesthetic of a plot into a constant value (e.g. set colour of all points to red) we can supply the colour argument to the geom_point() function.
