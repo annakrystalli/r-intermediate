@@ -40,7 +40,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 <figure>
-<embed src="images/data.svg" type="image/svg+xml" />
+<img src="images/data.svg" width="400">
 <figcaption>source: <a href="https://docs.google.com/presentation/d/10L-yA_Tq2-3r70F8EZHE0y5GCEE4214oJHucUclOhX8/edit#slide=id.g140a4aa7b2_1_0">Vega-Lite tutorial slides</a> by Dominik Moritz & Kanit “Ham” Wongsuphasawat
 </figcaption>
 </figure>
@@ -77,25 +77,16 @@ mtcars
 ```
 
 ### encode a variable on an axis
-<embed src="images/pl1.svg" type="image/svg+xml" />
+<img width="400" src="images/pl1.svg">
 
 ### add another variable using another axis
-<embed src="images/pl3.svg" type="image/svg+xml" />
+<img width="400" src="images/pl3.svg">
 
 ### encode a thrid variable using colour
-<embed src="images/pl4.svg" type="image/svg+xml" />
-
-
-
+<img width="400" src="images/pl4.svg">
 
 
 ### data properties guide visual encoding 
-
-<figure>
-<embed src="images/data_types.svg" type="image/svg+xml" />
-<figcaption>source: <a href="https://docs.google.com/presentation/d/10L-yA_Tq2-3r70F8EZHE0y5GCEE4214oJHucUclOhX8/edit#slide=id.g140a4aa7b2_1_0">Vega-Lite tutorial slides</a> by Dominik Moritz & Kanit “Ham” Wongsuphasawat
-</figcaption>
-</figure>
 
 
 
@@ -237,6 +228,8 @@ library(lubridate)
 
 ```
 
+[![](http://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.png)](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf)
+
 ## Get data
 
 ```{r}
@@ -375,7 +368,12 @@ pcPlot + geom_bar()
 
 **#BarBarPlots**
 
-![](https://pagepiccinini.files.wordpress.com/2016/02/barplot_psa1.jpg) ![](https://ksr-ugc.imgix.net/assets/011/118/050/2a0e6672e417ed2a12fac1b1828d309a_original.png?w=680&fit=max&v=1462543835&auto=format&lossless=true&s=28a174592b91b6b590e0b35da3ade2a0)
+A caution on using barplots:
+
+<img src="https://pagepiccinini.files.wordpress.com/2016/02/barplot_psa1.jpg" height="300" width="320">
+<img src="https://ksr-ugc.imgix.net/assets/011/118/050/2a0e6672e417ed2a12fac1b1828d309a_original.png?w=680&fit=max&v=1462543835&auto=format&lossless=true&s=28a174592b91b6b590e0b35da3ade2a0" height="300" width="600">
+
+Good for counts and representing absolute differences in counts. 
 
 ##### `geom_histogram`
 
@@ -388,12 +386,20 @@ pcPlot + geom_histogram()
 
 ```
 
-
-```{r, density_simple}
-pcPlot + geom_density(fill = "black") 
+```{r}
+pcPlot + geom_density() 
 
 ```
 
+
+```{r, density_simple}
+pcPlot + geom_density(fill = "grey") 
+
+```
+
+```{r}
+pcPlot + stat_density()
+```
 
 ## Geoms - Box and violin plots
 
@@ -408,6 +414,24 @@ pcPlot + geom_boxplot()
 pcPlot + geom_violin() 
 ```
 
+
+## pirateplot - `yarrr` `r emo::ji("package")`
+
+```{r, message=F, warning=F}
+library(yarrr)
+```
+
+
+```{r}
+patients_clean %>% pirateplot(formula = Weight ~ Sex,
+           data = .,
+           theme = 2)
+```
+
+
+
+### further details
+
 An overview of geoms and their arguments can be found at ggplot2 documentation or within the ggplot2 cheatsheet.
 
 -[ggplot2 documentation](http://docs.ggplot2.org/current/)
@@ -416,21 +440,15 @@ An overview of geoms and their arguments can be found at ggplot2 documentation o
 
 # Aesthetics
 
+- x
+- y
 - color/colour
 - fill
 - shape
 - size
 - linetype
 
-
-
-<figure>
-<img src="images/visual-encoding.png"/>
-<figcaption>source: <a href="https://docs.google.com/presentation/d/10L-yA_Tq2-3r70F8EZHE0y5GCEE4214oJHucUclOhX8/edit#slide=id.g140a4aa7b2_1_0">Vega-Lite tutorial slides</a> by Dominik Moritz & Kanit “Ham” Wongsuphasawat
-</figcaption>
-</figure>
-
-
+## assigning aesthetics
 
 In order to change the property on an aesthetic of a plot into a constant value (e.g. set colour of all points to red) we can supply the colour argument to the geom_point() function.
 
@@ -458,15 +476,9 @@ Now we can adjust the aes mapping by supplying an argument to the colour paramet
 This simple adjustment allows for identifaction of the separation between male and female measurements for height and weight.
 
 ```{r, scatter_aes_sexColour}
-pcPlot <- ggplot(patients_clean, aes(x=Height, y=Weight, colour=Sex, group = Sex))
-pcPlot + geom_point() + geom_smooth(method = "lm") 
+pcPlot <- ggplot(patients_clean, aes(x=Height, y=Weight, colour=Sex))
+pcPlot + geom_point()
 ```
-```{r}
-pcPlot <- ggplot(patients_clean, aes(x=Height, y=Weight, colour=Sex, shape = Smokes, linetype = Smokes))
-pcPlot + geom_point() + geom_smooth(method = "lm")
-```
-
-
 
 ```{r, scatter_aes_sexColourFill}
 pcPlot <- ggplot(patients_clean, 
@@ -483,42 +495,72 @@ pcPlot <- ggplot(data=patients_clean,
 pcPlot+geom_point()
 ```
 
-
-
-```{r, echo = F}
-generateRPointShapes<-function(){
-    oldPar<-par()
-    par(font=2, mar=c(0.5,0,0,0))
-    y=rev(c(rep(1,6),rep(2,5), rep(3,5), rep(4,5), rep(5,5)))
-    x=c(rep(1:5,5),6)
-    plot(x, y, pch = 0:25, cex=1.5, ylim=c(1,5.5), xlim=c(1,6.5),
-         axes=FALSE, xlab="", ylab="", bg="blue")
-    text(x, y, labels=0:25, pos=3)
-    par(mar=oldPar$mar,font=oldPar$font )
-}
-generateRPointShapes()
+```{r, aes_in_geom}
+pcPlot <- ggplot(data=patients_clean, aes(x=Height,y=Weight,colour=Sex, shape=Smokes)) + geom_point()
 ```
 
 
 
-The aesthetic mappings may be set directly in the geom_points() function as previously when specifying red. This can allow the same ggplot object to be used by different aesethetic mappings and varying geoms
+The aesthetic mappings may be set directly in the `geom_points()` function as previously when specifying red. This can allow the same ggplot object to be used by different aesethetic mappings and varying geoms
 
-```{r, aes_in_geom}
+
+```{r}
 pcPlot <- ggplot(data=patients_clean)
-pcPlot+geom_point(aes(x=Height,y=Weight,colour=Sex))
+```
+
+
+```{r}
 pcPlot+geom_point(aes(x=Height,y=Weight,colour=Smokes))
-pcPlot+geom_point(aes(x=Height,y=Weight,colour=Smokes,shape=Sex))
-pcPlot+geom_violin(aes(x=Sex,y=Height,fill=Smokes))
+
 ```
 
 ```{r}
-library(yarrr)
-pirateplot(formula = Weight ~ Sex,
-           data = patients_clean,
-           theme = 3,
-           main = "theme = 1")
+pcPlot+geom_point(aes(x=Height,y=Weight,colour=Smokes,shape=Sex))
+
 ```
 
+
+## attributes in other geoms
+
+### violin plots
+
+```{r}
+pcPlot+geom_violin(aes(x=Sex,y=Height,fill=Smokes))
+```
+
+
+
+
+### barplots
+
+We can map additional attributes to bars also. The default is to stack colours to indicate the distribution of counts of a discrete variable across another discrete variable. 
+
+```{r}
+pcPlot <- ggplot(data=patients_clean,
+        mapping=aes(x=Sex, fill=Pet))
+
+pcPlot + geom_bar() 
+```
+It's hard however to compare the distribution of pets accurately. We can present the counts as proportions using `position_fill()`
+```{r}
+pcPlot + geom_bar(position=position_fill()) 
+```
+Or to give them a common base, we can instead **dodge** the bars
+
+```{r}
+pcPlot + geom_bar(position="dodge2") 
+```
+
+
+```{r}
+pcPlot <- ggplot(data=patients_clean,
+        mapping=aes(x=Pet, fill=Sex))
+
+pcPlot + geom_bar(position="dodge2") 
+```
+
+
+###
 
 Again, for a comprehensive list of parameters and aesthetic mappings used in geom_*type*  functions see the ggplot2 documentation for individual geoms by using ?geom_*type*
 
@@ -642,18 +684,30 @@ patients_clean %>%
 # Scales
 
 Scales and their legends have so far been handled using ggplot2 defaults.
+
 ggplot2 offers functionality to have finer control over scales and legends using the *scale* methods.
 
 Scale methods are divided into functions by combinations of 
 
-* the aesthetics they control.
+* the **aesthetics** they control.
 
-* the type of data mapped to scale.
+* the **type of data mapped to scale**.
 
  
   scale_**aesthetic**_**type**
   
   Try typing in scale_ then *tab* to autocomplete. This will provide some examples of the scale functions available in ggplot2.
+
+<figure>
+<img src="images/data_types.svg" width="400">
+<img src="images/visual-encoding.svg" width="400">
+
+<figcaption>source: <a href="https://docs.google.com/presentation/d/10L-yA_Tq2-3r70F8EZHE0y5GCEE4214oJHucUclOhX8/edit#slide=id.g140a4aa7b2_1_0">Vega-Lite tutorial slides</a> by Dominik Moritz & Kanit “Ham” Wongsuphasawat
+</figcaption>
+</figure>
+
+
+
 
 Although different *scale* functions accept some variety in their arguments, common arguments to scale functions include - 
 
@@ -707,9 +761,59 @@ pcPlot +
   scale_y_continuous(breaks=c(160,180),labels=c("Short", "Tall"))
 ```
 
-## Controlling other scales.
+## Controlling **color** scales.
 
 When using fill,colour,linetype, shape, size or alpha aesthetic mappings the scales are automatically selected for you and the appropriate legends created.
+
+## ggplot has good defaults
+
+
+
+### categorical data trigger `scale_colour_hue()` or `scale_fill_hue()`
+
+
+```{r, echo = F, fig.height=1.3}
+library(colorspace)
+
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+}
+n <- 5
+pal <- gg_color_hue(n) %>% setNames(letters[1:n])
+df <- data.frame(x=letters[1:n])
+ggplot(data=df, aes(x), fill=x) + 
+    geom_bar(fill = pal) + 
+    theme(line = element_blank(),
+        text = element_blank(),
+        title = element_blank())
+
+```
+
+
+### continuous data trigger `scale_colour_gradient()` or `scale_fill_gradient()`
+
+
+```{r, echo=F, message=F, warning=F, fig.height=4}
+library(scales)
+library(colorspace)
+library(dichromat)
+n_col <- 128
+
+img <- function(obj, nam) {
+  image(1:length(obj), 1, as.matrix(1:length(obj)), col=obj, 
+        main = "", ylab = "", xaxt = "n", yaxt = "n",  bty = "n",
+        xlab = "")
+}
+
+img(rev(seq_gradient_pal(low = "#132B43", high = "#56B1F7", space = "Lab")(seq(0, 1, length=n_col))), "ggplot default")
+```
+
+## Controlling **colour** scales.
+
+
+In the above example the discrete colours for the Sex variable was selected by default.
+
 
 ```{r, facet_grid_height_weight}
 pcPlot <- ggplot(data=patients_clean,
@@ -717,10 +821,6 @@ pcPlot <- ggplot(data=patients_clean,
 pcPlot + geom_point(size=4)
                   
 ```
-
-In the above example the discrete colours for the Sex variable was selected by default.
-
-### Colour scales
 
 ### Manual discrete colour scale
 
@@ -736,7 +836,7 @@ pcPlot + geom_point(size=4) +
                   
 ```
 
-### Colorbrewer for discrete colour scale
+### [Colorbrewer](http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) for discrete colour scale
 
 Here we have specified the colours to be used (hence the manual) but when the number of levels to a variable are high this may be impractical and often we would like ggplot2 to choose colours from a scale of our choice.
 
@@ -755,6 +855,13 @@ The brewer set of scale functions allow the user to make use of a range of palet
  *Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu, PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd*
 
 
+Palletes available through package [`RColorBrewer`](https://cran.r-project.org/web/packages/RColorBrewer/RColorBrewer.pdf)
+
+```{r}
+RColorBrewer::display.brewer.all(n=20, exact.n=FALSE) 
+```
+
+
 ```{r, facet_grid_height_weight_brewerScale}
 pcPlot <- ggplot(data=patients_clean,
                  aes(x=Height,y=Weight,colour=Pet))
@@ -767,7 +874,7 @@ For more details on palette sizes and styles visit the colorbrewer website and g
 
 - [colorbrewer](http://colorbrewer2.org/)
 
-- [ggplot2 colour scales](http://docs.ggplot2.org/current/scale_brewer.html)
+
 
 ### Continuous colour scales
 
@@ -878,6 +985,31 @@ These color scales are designed to be:
 - **Pretty** oh so pretty
 
 
+#### palettes
+
+```{r, echo=F, message=F, warning=F, fig.height=4}
+library(viridis)
+
+par(mfrow=c(4, 1), mar=rep(1, 4))
+img(rev(viridis::viridis(n_col)), "viridis")
+img(rev(magma(n_col)), "magma")
+img(rev(plasma(n_col)), "plasma")
+img(rev(inferno(n_col)), "inferno")
+```
+
+#### palette comparison
+
+```{r echo=F, message=F, warning=F}
+par(mfrow=c(7, 1), mar=rep(1, 4))
+img(rev(rainbow(n_col)), "rainbow")
+img(rev(heat.colors(n_col)), "heat")
+img(rev(seq_gradient_pal(low = "#132B43", high = "#56B1F7", space = "Lab")(seq(0, 1, length=n_col))), "ggplot default")
+img(gradient_n_pal(brewer_pal(type="seq")(9))(seq(0, 1, length=n_col)), "brewer blues")
+img(gradient_n_pal(brewer_pal(type="seq", palette = "YlGnBu")(9))(seq(0, 1, length=n_col)), "brewer yellow-green-blue")
+img(rev(viridis(n_col)), "viridis")
+img(rev(magma(n_col)), "magma")
+```
+
 ```{r}
 library(viridis)
 ```
@@ -902,6 +1034,45 @@ pcPlot + geom_point(size=4,alpha=0.8)+
                          breaks=c(25,30),labels=c("Low","High"),
                          name="Body Mass Index")
 ```
+
+
+## Controlling shape
+
+Shape is mainly used for categorical data and ggplot maps a maximum of the following 6 shapes to categories by default
+
+```{r, echo=F, fig.height=1.3}
+d=data.frame(a=letters[1:6])
+ggplot(data = d) +
+scale_x_discrete(name="") +
+scale_y_continuous(limits=c(0,1), breaks=NULL, name="") +
+scale_shape_discrete(solid=T, guide=FALSE) +
+geom_point(data=d, mapping=aes(x=a, y=0.5, shape=a), size=10)
+```
+
+For more categories or to use any of the other shapes available through R, we need to set the shapes manually.
+
+#### available shapes:
+
+
+```{r, echo = F}
+generateRPointShapes<-function(){
+    oldPar<-par()
+    par(font=2, mar=c(0.5,0,0,0))
+    y=rev(c(rep(1,6),rep(2,5), rep(3,5), rep(4,5), rep(5,5)))
+    x=c(rep(1:5,5),6)
+    plot(x, y, pch = 0:25, cex=1.5, ylim=c(1,5.5), xlim=c(1,6.5),
+         axes=FALSE, xlab="", ylab="", bg="blue")
+    text(x, y, labels=0:25, pos=3)
+    par(mar=oldPar$mar,font=oldPar$font )
+}
+generateRPointShapes()
+``` 
+
+
+```{r}
+
+```
+
 
 
 # Statistical transformations.
@@ -952,9 +1123,82 @@ The fun.y parameter specifies a function to apply to the y variables for every v
 In this example we use it to plot the quantiles of the Female and Male Height data
 
 ```{r, stat_summary}
-pcPlot <- ggplot(data=patients_clean,
-        mapping=aes(x=Sex,y=Height))+geom_jitter()
-pcPlot+stat_summary(fun.y=quantile,geom="point",colour="purple",size=8)
+
+pal <- rep(c("black", "purple", "red", 
+             "purple","black"), 2)
+
+pcPlot <- ggplot(patients_clean,
+                 aes(x = Sex, y= Height)) + 
+    geom_jitter(colour = "grey")
+pcPlot+stat_summary(fun.y=quantile, geom="point",
+                    shape = "-", colour= pal, size=8)
+```
+
+
+
+## pirate plot in ggplot2
+
+Let's reproduce a pirate plot with ggplot
+
+Let's start with the raw data. One axis is categorical, so just plotting the data with `geom_point` just plots a string of data points. 
+
+```{r}
+p <- patients_clean %>% ggplot(aes(x = Sex, y = Weight, color = Sex, fill = Sex)) 
+p + geom_point()
+    
+```
+
+So we can try and **jitter** the points, adding random noise to their coordinates to try and disperse the points along the x axis. This is particularly useful for small datasets with at least one discrete position.
+
+```{r}
+p + geom_jitter(position=position_jitter(0.2)) 
+    
+```
+
+Another approach when faced with too many data points is to use a `dotplot` instead.
+
+```{r}
+p + geom_dotplot(binaxis='y', stackdir='center', dotsize=1)
+```
+Now we can add the violin plot.
+
+```{r}
+p + geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
+     geom_violin(fill = NA)
+```
+
+Now we can layer representations of statistical summaries.
+
+For example, we can add a visua representation of the distribution of `Weight` using `geom_boxplot`.
+
+```{r}
+p + geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
+    geom_violin(fill = NA) +
+    geom_boxplot(width=0.1, fill = "white", alpha = 0.60)
+```
+
+```{r}
+p + geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) +
+    geom_violin(fill = NA) +
+    #stat_summary(fun.y = mean, geom = "crossbar", fill = NA, colour = "black", fatten = 4) + 
+    stat_summary(fun.data = mean_se, geom = "crossbar", fatten = 2, width = 0.5, 
+                 fill = "white", alpha = 0.5, color = "black")
+```
+
+```{r}
+p + geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5) +
+    geom_violin(fill = NA) +
+    #stat_summary(fun.y = mean, geom = "crossbar", fill = NA, colour = "black", fatten = 4) + 
+    stat_summary(fun.data = mean_se, geom = "bar", fatten = 2, width = 0.5, 
+                 alpha = 0.5, color = NA)
+```
+
+
+# complex mapping
+
+```{r}
+pcPlot <- ggplot(patients_clean, aes(x=Height, y=Weight, colour=Sex, shape = Smokes, linetype = Smokes))
+pcPlot + geom_point() + geom_smooth(method = "lm")
 ```
 
 # Themes
